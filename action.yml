@@ -1,0 +1,12 @@
+name: 'Issue Labeler'
+description: 'Labels issues automagically based on their body'
+inputs:
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
+    required: true
+  configuration-path:
+    description:  'Path to the labeler.yml configuration file'
+    required: true
+runs:
+  using: 'node12'
+  main: 'lib/main.js'
