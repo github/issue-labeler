@@ -1,4 +1,4 @@
-name: 'Issue Labeler'
+name: 'RegEx Issue Labeler'
 description: 'Labels issues automagically based on their body'
 inputs:
   repo-token:
