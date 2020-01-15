@@ -1,5 +1,6 @@
 name: 'RegEx Issue Labeler'
 description: 'Labels issues automagically based on their body'
+author: 'GitHub'
 inputs:
   repo-token:
     description: 'The GITHUB_TOKEN secret'
