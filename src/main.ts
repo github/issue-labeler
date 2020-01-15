@@ -23,7 +23,7 @@ async function run() {
     const labels = getLabels(client, issue_number)
 
     // Load our regex rules from the configuration path
-    const labelGlobs: Map<string, string[]> = await getLabelGlobs(
+    const labelRegexes: Map<string, string[]> = await getLabelRegexes(
       client,
       configPath
     );
@@ -31,11 +31,8 @@ async function run() {
     const addLabel: string[] = []
     const removeLabelItems: string[] = []
 
-    for (const [label, globs] of labelGlobs.entries()) {
-      console.debug(`processing ${label}`);
-      console.debug(`for globs ${globs[0]}`);
-      if (checkGlobs(issue_body, globs)) {
-        console.log(`Queue label for addition: ${label}` )
+    for (const [label, globs] of labelRegexes.entries()) {
+      if (checkRegexes(issue_body, globs)) {
         addLabel.push(label)
       }
       else
@@ -77,7 +74,7 @@ function getIssueBody(): string | undefined {
   return issue.body;
 }
 
-async function getLabelGlobs(
+async function getLabelRegexes(
   client: github.GitHub,
   configurationPath: string
 ): Promise<Map<string, string[]>> {
@@ -90,7 +87,7 @@ async function getLabelGlobs(
   const configObject: any = yaml.safeLoad(configurationContent);
 
   // transform `any` => `Map<string,string[]>` or throw if yaml is malformed:
-  return getLabelGlobMapFromObject(configObject);
+  return getLabelRegexesMapFromObject(configObject);
 }
 
 // Load the configuration file
@@ -113,36 +110,32 @@ async function fetchContent(
   return Buffer.from(data.content, 'base64').toString('utf8');
 }
 
-function getLabelGlobMapFromObject(configObject: any): Map<string, string[]> {
-  const labelGlobs: Map<string, string[]> = new Map();
+function getLabelRegexesMapFromObject(configObject: any): Map<string, string[]> {
+  const labelRegexes: Map<string, string[]> = new Map();
   for (const label in configObject) {
     if (typeof configObject[label] === 'string') {
-      labelGlobs.set(label, [configObject[label]]);
+      labelRegexes.set(label, [configObject[label]]);
     } else if (Array.isArray(configObject[label])) {
-      labelGlobs.set(label, configObject[label]);
+      labelRegexes.set(label, configObject[label]);
     } else {
       throw Error(
-        `found unexpected type for label ${label} (should be string or array of globs)`
+        `found unexpected type for label ${label} (should be string or array of regex)`
       );
     }
   }
 
-  return labelGlobs;
+  return labelRegexes;
 }
 
-function checkGlobs(issue_body: string, globs: string[]): boolean {
-  console.log(issue_body)
+function checkRegexes(issue_body: string, regexes: string[]): boolean {
 
   // If several regex entries are provided we require all of them to match for the label to be applied.
-  for (const glob of globs) {
-    console.log(` checking pattern ${glob}`);
-    const found = issue_body.match(glob)
+  for (const regEx of regexes) {
+    const found = issue_body.match(regEx)
     if (!found)
     {
-      console.log(`Didn't find pattern`)
       return false;
     }
-    console.log(`Found patterns ${found}`)
   }
   return true;
 }
@@ -163,12 +156,9 @@ async function getLabels(
     process.exit(1);
   }
   const labels: string[] = [];
-  console.log(data)
   for (let i = 0; i < Object.keys(data).length; i++) {
-    console.log(`label is ${data[i].name}`)
     labels.push(data[i].name)
   }
-  console.log("done")
   return labels;
 }
 
