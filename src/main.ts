@@ -21,7 +21,6 @@ async function run() {
     const client = new github.GitHub(token);
 
     // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
-    console.log(notBefore)
     if (notBefore) {
       const issue = client.issues.get({
         owner: github.context.repo.owner,
@@ -29,7 +28,6 @@ async function run() {
         issue_number: issue_number,
       });
       const issueCreatedAt = Date.parse((await issue).data.created_at)
-      console.log(issueCreatedAt)
       if (issueCreatedAt < notBefore) {
         console.log("Issue is before `notBefore` configuration parameter. Exiting...")
         process.exit(0);
