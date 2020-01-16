@@ -7,6 +7,7 @@ async function run() {
     // Configuration parameters
     const token = core.getInput('repo-token', { required: true });
     const configPath = core.getInput('configuration-path', { required: true });
+    const notBefore = Date.parse(core.getInput('not-before', { required: false }));
 
     const issue_number = getIssueNumber();
     const issue_body = getIssueBody();
@@ -18,7 +19,21 @@ async function run() {
 
     // A client to load data from GitHub
     const client = new github.GitHub(token);
-    client.issues.removeLabels
+
+    // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
+    if (notBefore) {
+      const issue = client.issues.get({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        issue_number: issue_number,
+      });
+      const issueCreatedAt = Date.parse((await issue).data.created_at)
+
+      if (issueCreatedAt < notBefore) {
+        process.exit(1);
+      }
+    }
+
     // Load the existing labels the issue has
     const labels = getLabels(client, issue_number)
 
@@ -139,7 +154,6 @@ function checkRegexes(issue_body: string, regexes: string[]): boolean {
   }
   return true;
 }
-
 
 async function getLabels(
   client: github.GitHub,
