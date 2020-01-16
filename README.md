@@ -36,6 +36,8 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         configuration-path: .github/labeler.yml
+        not-before: 2020-01-15T02:54:32Z
 ```
 
+`not-before` is optional and will result in any issues prior to this timestamp to be ignored.
 _Note: This grants access to the `GITHUB_TOKEN` so the action can make calls to GitHub's rest API_
