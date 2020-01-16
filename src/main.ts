@@ -31,7 +31,8 @@ async function run() {
       const issueCreatedAt = Date.parse((await issue).data.created_at)
       console.log(issueCreatedAt)
       if (issueCreatedAt < notBefore) {
-        process.exit(1);
+        console.log("Issue is before `notBefore` configuration parameter. Exiting...")
+        process.exit(0);
       }
     }
 
