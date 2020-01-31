@@ -5,10 +5,11 @@ import * as yaml from 'js-yaml';
 async function run() {
   try {
     // Configuration parameters
+    var configPath = core.getInput('configuration-path', { required: true });
     const token = core.getInput('repo-token', { required: true });
-    const configPath = core.getInput('configuration-path', { required: true });
+    const enableVersionedRegex = parseInt(core.getInput('enable-versioned-regex', { required: true }));
+    const versionedRegex = new RegExp(core.getInput('versioned-regex', { required: false }));
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
-
     const issue_number = getIssueNumber();
     const issue_body = getIssueBody();
 
@@ -17,6 +18,14 @@ async function run() {
       return;
     }
 
+    if (enableVersionedRegex == 1) {
+      const regexVersion = versionedRegex.exec(issue_body)
+      if (!regexVersion || !regexVersion[1]) {
+        console.log(`Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`)
+        return 0;
+      }
+      configPath = regexifyConfigPath(configPath, regexVersion[1])
+    }
     // A client to load data from GitHub
     const client = new github.GitHub(token);
 
@@ -34,9 +43,6 @@ async function run() {
       }
     }
 
-    // Load the existing labels the issue has
-    const labels = getLabels(client, issue_number)
-
     // Load our regex rules from the configuration path
     const labelRegexes: Map<string, string[]> = await getLabelRegexes(
       client,
@@ -50,19 +56,17 @@ async function run() {
       if (checkRegexes(issue_body, globs)) {
         addLabel.push(label)
       }
-      else
-      {
+      else {
         removeLabelItems.push(label)
       }
     }
-    if(addLabel.length > 0)
-    {
-      console.log(`Adding labels ${ addLabel.toString() } to issue #${ issue_number }`)
+    if (addLabel.length > 0) {
+      console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`)
       addLabels(client, issue_number, addLabel)
     }
 
     removeLabelItems.forEach(function (label, index) {
-      console.log(`Removing label ${label } from issue #${ issue_number }`)
+      console.log(`Removing label ${label} from issue #${issue_number}`)
       removeLabel(client, issue_number, label)
     });
   } catch (error) {
@@ -87,6 +91,11 @@ function getIssueBody(): string | undefined {
   }
 
   return issue.body;
+}
+
+function regexifyConfigPath(configPath: string, version: string) {
+  var lastIndex = configPath.lastIndexOf('.')
+  return `${configPath.substr(0, lastIndex)}-v${version}.yml`
 }
 
 async function getLabelRegexes(
@@ -147,8 +156,7 @@ function checkRegexes(issue_body: string, regexes: string[]): boolean {
   // If several regex entries are provided we require all of them to match for the label to be applied.
   for (const regEx of regexes) {
     const found = issue_body.match(regEx)
-    if (!found)
-    {
+    if (!found) {
       return false;
     }
   }
