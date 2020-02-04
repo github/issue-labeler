@@ -14,7 +14,7 @@ The key is the name of the label in your repository that you want to add (eg: "m
 
 ```yml
 # Add/remove 'critical' label if issue contains the words 'urgent' or 'critical'
-impact:external:
+critical:
     - '(critical|urgent)'
 ```
 
