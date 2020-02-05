@@ -81,6 +81,6 @@ jobs:
 
 When the issue is evaluated it'll look for `.github/labeler-v1.yml` based on the `configuration-path` and the version number set in the issue.
 
-When you reach a point where you'd like to update your labels and regular expressions and it could cause a conflict with historic issues, simply update your issue template to include `issue_labeler_regex_version=2` and create the file `.github/labeler-v2.yml`. The issue will automatically be matched to the correct set up regular expressions.
+When you reach a point where you'd like to update your labels and regular expressions and it could cause a conflict with historic issues, simply update your issue template to include `issue_labeler_regex_version=2` and create the file `.github/labeler-v2.yml`. The issue will automatically be matched to the correct set of regular expressions.
 
 Set `versioned-regex` to any valid regular expression that should be used to capture the version number from the issue. The first match will be used should multiple be found.
