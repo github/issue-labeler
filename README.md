@@ -32,12 +32,12 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v2
+    - uses: github/issue-labeler@v2.0
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         configuration-path: .github/labeler.yml
         not-before: 2020-01-15T02:54:32Z
-        enableVersionedRegex: 0
+        enable-versioned-regex: 0
 ```
 
 `not-before` is optional and will result in any issues prior to this timestamp to be ignored.
@@ -70,7 +70,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v2
+    - uses: github/issue-labeler@v2.0
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         configuration-path: .github/labeler.yml
