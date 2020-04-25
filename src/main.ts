@@ -196,10 +196,6 @@ async function addLabels(
   issue_number: number,
   labels: string[]
 ) {
-  const existingLabels = getLabels(client, issue_number)
-  Promise.resolve(existingLabels).then(promisedLabels => {
-    labels = labels.filter(l => promisedLabels.indexOf(l))
-  })
 
   await client.issues.addLabels({
     owner: github.context.repo.owner,
