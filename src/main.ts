@@ -22,15 +22,22 @@ async function run() {
     // A client to load data from GitHub
     const client = new github.GitHub(token);
 
+    const addLabel: string[] = []
+    const removeLabelItems: string[] = []
+
     if (enableVersionedRegex == 1) {
       const regexVersion = versionedRegex.exec(issue_body)
       if (!regexVersion || !regexVersion[1]) {
         if (bodyMissingRexexLabel) {
-          var labels: string[] = [bodyMissingRexexLabel];
-          addLabels(client, issue_number, labels);
+          addLabels(client, issue_number, [bodyMissingRexexLabel]);
         }
         console.log(`Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`)
         return 0;
+      }
+      else {
+        if (bodyMissingRexexLabel) {
+          removeLabelItems.push(bodyMissingRexexLabel);
+        }
       }
       configPath = regexifyConfigPath(configPath, regexVersion[1])
     }
@@ -55,9 +62,6 @@ async function run() {
       client,
       configPath
     );
-
-    const addLabel: string[] = []
-    const removeLabelItems: string[] = []
 
     for (const [label, globs] of labelRegexes.entries()) {
       if (checkRegexes(issue_body, globs)) {
