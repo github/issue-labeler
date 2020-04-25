@@ -77,6 +77,7 @@ jobs:
         not-before: 2020-01-15T02:54:32Z
         enable-versioned-regex: 1
         versioned-regex: 'issue_labeler_regex_version=(\d+)'
+        body-missing-regex-label: 'broken-template'
 ```
 
 When the issue is evaluated it'll look for `.github/labeler-v1.yml` based on the `configuration-path` and the version number set in the issue.
@@ -84,3 +85,5 @@ When the issue is evaluated it'll look for `.github/labeler-v1.yml` based on the
 When you reach a point where you'd like to update your labels and regular expressions and it could cause a conflict with historic issues, simply update your issue template to include `issue_labeler_regex_version=2` and create the file `.github/labeler-v2.yml`. The issue will automatically be matched to the correct set of regular expressions.
 
 Set `versioned-regex` to any valid regular expression that should be used to capture the version number from the issue. The first match will be used should multiple be found.
+
+Set `body-missing-regex-label` to the name of the label that should be added to an issue where the specified `version-regex` can't be found. This is useful for when your users accidentally delete this value. Leave this blank if you don't want to use this functionality.
