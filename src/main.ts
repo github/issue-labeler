@@ -26,7 +26,8 @@ async function run() {
       const regexVersion = versionedRegex.exec(issue_body)
       if (!regexVersion || !regexVersion[1]) {
         if (bodyMissingRexexLabel) {
-          addLabels(client, issue_number, [bodyMissingRexexLabel]);
+          var labels: string[] = [bodyMissingRexexLabel];
+          addLabels(client, issue_number, labels);
         }
         console.log(`Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`)
         return 0;
