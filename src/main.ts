@@ -10,6 +10,7 @@ async function run() {
     const enableVersionedRegex = parseInt(core.getInput('enable-versioned-regex', { required: true }));
     const versionedRegex = new RegExp(core.getInput('versioned-regex', { required: false }));
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
+    const bodyMissingRexexLabel = core.getInput('body-missing-regex-label', { required: false });
     const issue_number = getIssueNumber();
     const issue_body = getIssueBody();
 
@@ -18,16 +19,29 @@ async function run() {
       return;
     }
 
+    // A client to load data from GitHub
+    const client = new github.GitHub(token);
+
+    const addLabel: string[] = []
+    const removeLabelItems: string[] = []
+
     if (enableVersionedRegex == 1) {
       const regexVersion = versionedRegex.exec(issue_body)
       if (!regexVersion || !regexVersion[1]) {
+        if (bodyMissingRexexLabel) {
+          addLabels(client, issue_number, [bodyMissingRexexLabel]);
+        }
         console.log(`Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`)
         return 0;
       }
+      else {
+        if (bodyMissingRexexLabel) {
+          removeLabelItems.push(bodyMissingRexexLabel);
+        }
+      }
       configPath = regexifyConfigPath(configPath, regexVersion[1])
     }
-    // A client to load data from GitHub
-    const client = new github.GitHub(token);
+
 
     // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
     if (notBefore) {
@@ -48,9 +62,6 @@ async function run() {
       client,
       configPath
     );
-
-    const addLabel: string[] = []
-    const removeLabelItems: string[] = []
 
     for (const [label, globs] of labelRegexes.entries()) {
       if (checkRegexes(issue_body, globs)) {
@@ -189,6 +200,7 @@ async function addLabels(
   issue_number: number,
   labels: string[]
 ) {
+
   await client.issues.addLabels({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
