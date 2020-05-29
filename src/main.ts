@@ -12,9 +12,10 @@ async function run() {
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
     const bodyMissingRexexLabel = core.getInput('body-missing-regex-label', { required: false });
     const issue_number = getIssueNumber();
+    const issue_title = getIssueTitle();
     const issue_body = getIssueBody();
 
-    if (!issue_number || !issue_body) {
+    if (!issue_number || !issue_title || !issue_body) {
       console.log('Could not get issue number or issue body from context, exiting');
       return;
     }
@@ -64,7 +65,7 @@ async function run() {
     );
 
     for (const [label, globs] of labelRegexes.entries()) {
-      if (checkRegexes(issue_body, globs)) {
+      if (checkRegexes(issue_title, issue_body, globs)) {
         addLabel.push(label)
       }
       else {
@@ -93,6 +94,15 @@ function getIssueNumber(): number | undefined {
   }
 
   return issue.number;
+}
+
+function getIssueTitle(): string | undefined {
+  const issue = github.context.payload.issue;
+  if (!issue) {
+    return;
+  }
+
+  return issue.title;
 }
 
 function getIssueBody(): string | undefined {
@@ -162,12 +172,14 @@ function getLabelRegexesMapFromObject(configObject: any): Map<string, string[]> 
   return labelRegexes;
 }
 
-function checkRegexes(issue_body: string, regexes: string[]): boolean {
-
+function checkRegexes(issue_title: string, issue_body: string, regexes: string[]): boolean {
   // If several regex entries are provided we require all of them to match for the label to be applied.
   for (const regEx of regexes) {
-    const found = issue_body.match(regEx)
-    if (!found) {
+    const titleFound = issue_title.match(regEx)
+    const bodyFound = issue_body.match(regEx)
+    if (titleFound || bodyFound) {
+      return true;
+    } else {
       return false;
     }
   }
