@@ -1,4 +1,4 @@
-name: 'RegEx Issue Labeler'
+name: 'RegEx Issue Title Labeler'
 description: 'Labels issues automagically based on their title and body'
 author: 'GitHub'
 inputs:
