@@ -1,5 +1,5 @@
-name: 'RegEx Issue Labeler'
-description: 'Labels issues automagically based on their body'
+name: 'RegEx Issue Title Labeler'
+description: 'Labels issues automagically based on their title and body'
 author: 'GitHub'
 inputs:
   repo-token:

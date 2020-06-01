@@ -1,6 +1,6 @@
 # Issue Labeler
 
-Issue labeler will label issues based on the body content of the issue.
+Issue labeler will label issues based on the title and body content of the issue.
 
 ## Usage
 
