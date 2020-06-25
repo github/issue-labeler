@@ -163,10 +163,18 @@ function getLabelRegexesMapFromObject(configObject: any): Map<string, string[]> 
 }
 
 function checkRegexes(issue_body: string, regexes: string[]): boolean {
+  var found;
 
   // If several regex entries are provided we require all of them to match for the label to be applied.
   for (const regEx of regexes) {
-    const found = issue_body.match(regEx)
+    const isRegEx = regEx.match(/^\/(.+)\/(.*)$/)
+
+    if (isRegEx) {
+      found = issue_body.match(new RegExp(isRegEx[1], isRegEx[2]))
+    } else {
+      found = issue_body.match(regEx)
+    }
+
     if (!found) {
       return false;
     }
