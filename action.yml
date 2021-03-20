@@ -8,6 +8,9 @@ inputs:
   configuration-path:
     description:  'Path to the labeler.yml configuration file'
     required: true
+  enable-versioned-regex:
+    description:  'Controls if versioned regex templates are being used'
+    required: true
 runs:
   using: 'node12'
   main: 'lib/main.js'
