@@ -15,7 +15,7 @@ inputs:
     description: 'The regex version number to use. Only required if using versioned regex files'
     required: false
   not-before:
-    description: 'is optional and will result in any issues prior to this timestamp to be ignored'
+    description: 'Is optional and will result in any issues prior to this timestamp to be ignored'
     required: false
   body-missing-regex-label:
     description: 'The name of the label that should be added to an issue where the specified `version-regex` can not be found.'
