@@ -10,7 +10,7 @@ async function run() {
     const enableVersionedRegex = parseInt(core.getInput('enable-versioned-regex', { required: true }));
     const versionedRegex = new RegExp(core.getInput('versioned-regex', { required: false }));
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
-    const bodyMissingRexexLabel = core.getInput('body-missing-regex-label', { required: false });
+    const bodyMissingRegexLabel = core.getInput('body-missing-regex-label', { required: false });
     const issue_number = getIssueNumber();
     const issue_body = getIssueBody();
 
@@ -28,15 +28,15 @@ async function run() {
     if (enableVersionedRegex == 1) {
       const regexVersion = versionedRegex.exec(issue_body)
       if (!regexVersion || !regexVersion[1]) {
-        if (bodyMissingRexexLabel) {
-          addLabels(client, issue_number, [bodyMissingRexexLabel]);
+        if (bodyMissingRegexLabel) {
+          addLabels(client, issue_number, [bodyMissingRegexLabel]);
         }
         console.log(`Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`)
         return 0;
       }
       else {
-        if (bodyMissingRexexLabel) {
-          removeLabelItems.push(bodyMissingRexexLabel);
+        if (bodyMissingRegexLabel) {
+          removeLabelItems.push(bodyMissingRegexLabel);
         }
       }
       configPath = regexifyConfigPath(configPath, regexVersion[1])
