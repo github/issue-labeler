@@ -14,7 +14,7 @@ async function run() {
     const issue_number = getIssueNumber();
     const issue_body = getIssueBody();
 
-    if (!issue_number || !issue_body) {
+    if (issue_number === undefined || issue_body === undefined) {
       console.log('Could not get issue number or issue body from context, exiting');
       return;
     }
