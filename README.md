@@ -41,7 +41,8 @@ jobs:
 ```
 
 `not-before` is optional and will result in any issues prior to this timestamp to be ignored.
-_Note: This grants access to the `GITHUB_TOKEN` so the action can make calls to GitHub's rest API_
+
+_Note: The above workflow grants access to the `GITHUB_TOKEN` so the action can make calls to GitHub's REST API._
 
 
 ### Example using versioned issue templates
