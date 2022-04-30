@@ -88,3 +88,13 @@ When you reach a point where you'd like to update your labels and regular expres
 Set `versioned-regex` to any valid regular expression that should be used to capture the version number from the issue. The first match will be used should multiple be found.
 
 Set `body-missing-regex-label` to the name of the label that should be added to an issue where the specified `version-regex` can't be found. This is useful for when your users accidentally delete this value. Leave this blank if you don't want to use this functionality.
+
+### Example using for pull requests
+
+The labeler action is also available for pull requests. Make sure the workflow is triggered by pull requests.
+
+```
+on:
+  pull_requests:
+    types: [opened, edited]
+```
