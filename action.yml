@@ -20,6 +20,10 @@ inputs:
   body-missing-regex-label:
     description: 'The name of the label that should be added to an issue where the specified `version-regex` can not be found.'
     required: false
+  include-title:
+    description: 'Include the title in addition to the body in the regex target'
+    required: false
+    default: "0"
 runs:
   using: 'node12'
   main: 'lib/main.js'

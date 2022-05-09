@@ -98,3 +98,25 @@ on:
   pull_requests:
     types: [opened, edited]
 ```
+
+### Example including the issue title in the regex target
+
+Set `include-title` to `1` to include the issue title in addition to the body in the regular expression target.
+
+```
+name: "Issue Labeler"
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: github/issue-labeler@v2.0
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: .github/labeler.yml
+        enable-versioned-regex: 0
+        include-title: 1
+```

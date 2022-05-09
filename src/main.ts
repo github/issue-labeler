@@ -11,6 +11,7 @@ async function run() {
     const versionedRegex = new RegExp(core.getInput('versioned-regex', { required: false }));
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
     const bodyMissingRegexLabel = core.getInput('body-missing-regex-label', { required: false });
+    const includeTitle = parseInt(core.getInput('include-title', { required: false }));
     const issue_number = getIssueOrPullRequestNumber();
     if (issue_number === undefined) {
       console.log('Could not get issue or pull request number from context, exiting');
@@ -20,6 +21,12 @@ async function run() {
     const issue_body = getIssueOrPullRequestBody();
     if (issue_body === undefined) {
       console.log('Could not get issue or pull request body from context, exiting');
+      return;
+    }
+
+    const issue_title = getIssueOrPullRequestTitle();
+    if (issue_title === undefined) {
+      console.log('Could not get issue or pull request title from context, exiting');
       return;
     }
 
@@ -46,7 +53,6 @@ async function run() {
       configPath = regexifyConfigPath(configPath, regexVersion[1])
     }
 
-
     // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
     if (notBefore) {
       const issue = client.issues.get({
@@ -67,8 +73,14 @@ async function run() {
       configPath
     );
 
+    let issueContent = ""
+    if (includeTitle === 1) {
+      issueContent += `${issue_title}\n\n`
+    }
+    issueContent += issue_body
+
     for (const [label, globs] of labelRegexes.entries()) {
-      if (checkRegexes(issue_body, globs)) {
+      if (checkRegexes(issueContent, globs)) {
         addLabel.push(label)
       }
       else {
@@ -113,6 +125,20 @@ function getIssueOrPullRequestBody(): string | undefined {
   const pull_request = github.context.payload.pull_request;
   if (pull_request) {
     return pull_request.body;
+  }
+
+  return;
+}
+
+function getIssueOrPullRequestTitle(): string | undefined {
+  const issue = github.context.payload.issue;
+  if (issue) {
+    return issue.title;
+  }
+
+  const pull_request = github.context.payload.pull_request;
+  if (pull_request) {
+    return pull_request.title;
   }
 
   return;
