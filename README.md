@@ -89,7 +89,7 @@ Set `versioned-regex` to any valid regular expression that should be used to cap
 
 Set `body-missing-regex-label` to the name of the label that should be added to an issue where the specified `version-regex` can't be found. This is useful for when your users accidentally delete this value. Leave this blank if you don't want to use this functionality.
 
-### Example using for pull requests
+### Pull request support
 
 The labeler action is also available for pull requests. Make sure the workflow is triggered by pull requests.
 
