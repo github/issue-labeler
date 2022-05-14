@@ -1,5 +1,5 @@
 name: 'RegEx Issue Labeler'
-description: 'Labels issues automagically based on their body'
+description: 'Labels issues automatically based on their body'
 author: 'GitHub'
 inputs:
   repo-token:
@@ -24,5 +24,5 @@ runs:
   using: 'node12'
   main: 'lib/main.js'
 branding:
-  icon: 'activity'  
+  icon: 'activity'
   color: 'blue'
