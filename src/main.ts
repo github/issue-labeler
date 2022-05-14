@@ -11,11 +11,15 @@ async function run() {
     const versionedRegex = new RegExp(core.getInput('versioned-regex', { required: false }));
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
     const bodyMissingRegexLabel = core.getInput('body-missing-regex-label', { required: false });
-    const issue_number = getIssueNumber();
-    const issue_body = getIssueBody();
+    const issue_number = getIssueOrPullRequestNumber();
+    if (issue_number === undefined) {
+      console.log('Could not get issue or pull request number from context, exiting');
+      return;
+    }
 
-    if (issue_number === undefined || issue_body === undefined) {
-      console.log('Could not get issue number or issue body from context, exiting');
+    const issue_body = getIssueOrPullRequestBody();
+    if (issue_body === undefined) {
+      console.log('Could not get issue or pull request body from context, exiting');
       return;
     }
 
@@ -86,22 +90,32 @@ async function run() {
   }
 }
 
-function getIssueNumber(): number | undefined {
+function getIssueOrPullRequestNumber(): number | undefined {
   const issue = github.context.payload.issue;
-  if (!issue) {
-    return;
+  if (issue) {
+    return issue.number;
   }
 
-  return issue.number;
+  const pull_request = github.context.payload.pull_request;
+  if (pull_request) {
+    return pull_request.number;
+  }
+
+  return;
 }
 
-function getIssueBody(): string | undefined {
+function getIssueOrPullRequestBody(): string | undefined {
   const issue = github.context.payload.issue;
-  if (!issue) {
-    return;
+  if (issue) {
+    return issue.body;
   }
 
-  return issue.body;
+  const pull_request = github.context.payload.pull_request;
+  if (pull_request) {
+    return pull_request.body;
+  }
+
+  return;
 }
 
 function regexifyConfigPath(configPath: string, version: string) {
