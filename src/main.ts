@@ -12,6 +12,7 @@ async function run() {
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
     const bodyMissingRegexLabel = core.getInput('body-missing-regex-label', { required: false });
     const includeTitle = parseInt(core.getInput('include-title', { required: false }));
+
     const issue_number = getIssueOrPullRequestNumber();
     if (issue_number === undefined) {
       console.log('Could not get issue or pull request number from context, exiting');
@@ -146,7 +147,7 @@ function getIssueOrPullRequestTitle(): string | undefined {
 
 function regexifyConfigPath(configPath: string, version: string) {
   var lastIndex = configPath.lastIndexOf('.')
-  return `${configPath.substr(0, lastIndex)}-v${version}.yml`
+  return `${configPath.substring(0, lastIndex)}-v${version}.yml`
 }
 
 async function getLabelRegexes(
