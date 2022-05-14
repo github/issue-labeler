@@ -106,7 +106,7 @@ function getIssueBody(): string | undefined {
 
 function regexifyConfigPath(configPath: string, version: string) {
   var lastIndex = configPath.lastIndexOf('.')
-  return `${configPath.substr(0, lastIndex)}-v${version}.yml`
+  return `${configPath.substring(0, lastIndex)}-v${version}.yml`
 }
 
 async function getLabelRegexes(
