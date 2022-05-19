@@ -34,8 +34,8 @@ async function run() {
     // A client to load data from GitHub
     const client = new github.GitHub(token);
 
-    const addLabel: string[] = []
-    const removeLabelItems: string[] = []
+    const additions: string[] = []
+    const removals: string[] = []
 
     if (enableVersionedRegex == 1) {
       const regexVersion = versionedRegex.exec(issue_body)
@@ -48,7 +48,7 @@ async function run() {
       }
       else {
         if (bodyMissingRegexLabel) {
-          removeLabelItems.push(bodyMissingRegexLabel);
+          removals.push(bodyMissingRegexLabel);
         }
       }
       configPath = regexifyConfigPath(configPath, regexVersion[1])
@@ -82,18 +82,18 @@ async function run() {
 
     for (const [label, globs] of labelRegexes.entries()) {
       if (checkRegexes(issueContent, globs)) {
-        addLabel.push(label)
+        additions.push(label)
       }
       else {
-        removeLabelItems.push(label)
+        removals.push(label)
       }
     }
-    if (addLabel.length > 0) {
-      console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`)
-      addLabels(client, issue_number, addLabel)
+    if (additions.length > 0) {
+      console.log(`Adding labels ${additions.toString()} to issue #${issue_number}`)
+      addLabels(client, issue_number, additions)
     }
 
-    removeLabelItems.forEach(function (label, index) {
+    removals.forEach(function (label, _index) {
       console.log(`Removing label ${label} from issue #${issue_number}`)
       removeLabel(client, issue_number, label)
     });
@@ -223,38 +223,23 @@ function checkRegexes(issue_body: string, regexes: string[]): boolean {
   return true;
 }
 
-async function getLabels(
-  client: github.GitHub,
-  issue_number: number,
-): Promise<string[]> {
-  const response = await client.issues.listLabelsOnIssue({
-    owner: github.context.repo.owner,
-    repo: github.context.repo.repo,
-    issue_number: issue_number,
-  });
-  const data = response.data
-  if (response.status != 200) {
-    console.log('Unable to load labels. Exiting...')
-    process.exit(1);
-  }
-  const labels: string[] = [];
-  for (let i = 0; i < Object.keys(data).length; i++) {
-    labels.push(data[i].name)
-  }
-  return labels;
-}
-
 async function addLabels(
   client: github.GitHub,
   issue_number: number,
-  labels: string[]
+  targets: string[]
 ) {
-
   await client.issues.addLabels({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     issue_number: issue_number,
-    labels: labels
+    labels: targets
+  });
+
+  await client.issues.addAssignees({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: issue_number,
+    assignees: targets
   });
 }
 
@@ -268,6 +253,13 @@ async function removeLabel(
     repo: github.context.repo.repo,
     issue_number: issue_number,
     name: name
+  });
+
+  await client.issues.removeAssignees({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: issue_number,
+    assignees: [name]
   });
 }
 
