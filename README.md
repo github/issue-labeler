@@ -22,7 +22,7 @@ critical:
 
 Create a workflow (eg: `.github/workflows/labeler.yml` see [Creating a Workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file)) to utilize the labeler action with content:
 
-```
+```yml
 name: "Issue Labeler"
 on:
   issues:
@@ -51,7 +51,7 @@ As you iterate on your regular expressions, since maybe your issue template gets
 
 Below is the body of an example issue which has the version identifier `issue_labeler_regex_version` embedded.
 
-```
+```markdown
 <!--
 issue_labeler_regex_version=1
 --!>
@@ -61,7 +61,7 @@ I have an urgent issue that requires someone's attention.
 
 Below is the workflow file
 
-```
+```yml
 name: "Issue Labeler"
 on:
   issues:
@@ -93,7 +93,7 @@ Set `body-missing-regex-label` to the name of the label that should be added to 
 
 The labeler action is also available for pull requests. Make sure the workflow is triggered by pull requests.
 
-```
+```yml
 on:
   pull_requests:
     types: [opened, edited]
@@ -103,7 +103,7 @@ on:
 
 Set `include-title` to `1` to include the issue title in addition to the body in the regular expression target.
 
-```
+```yml
 name: "Issue Labeler"
 on:
   issues:
