@@ -12,6 +12,7 @@ async function run() {
     const notBefore = Date.parse(core.getInput('not-before', { required: false }));
     const bodyMissingRegexLabel = core.getInput('body-missing-regex-label', { required: false });
     const includeTitle = parseInt(core.getInput('include-title', { required: false }));
+    const syncLabels = parseInt(core.getInput('sync-labels', { required: false }));
 
     const issue_number = getIssueOrPullRequestNumber();
     if (issue_number === undefined) {
@@ -93,10 +94,12 @@ async function run() {
       addLabels(client, issue_number, addLabel)
     }
 
-    removeLabelItems.forEach(function (label, index) {
-      console.log(`Removing label ${label} from issue #${issue_number}`)
-      removeLabel(client, issue_number, label)
-    });
+    if (syncLabels) {
+      removeLabelItems.forEach(function (label, index) {
+        console.log(`Removing label ${label} from issue #${issue_number}`)
+        removeLabel(client, issue_number, label)
+      });
+    }
   } catch (error) {
     core.error(error);
     core.setFailed(error.message);
