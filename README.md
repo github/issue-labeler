@@ -120,3 +120,21 @@ jobs:
         enable-versioned-regex: 0
         include-title: 1
 ```
+
+### Syncing Labels
+
+By default, labels that no longer match are removed from the issue. To disable this functionality, explicity
+set `sync-labels` to `0`.
+
+```
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: github/issue-labeler@v2.0
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: .github/labeler.yml
+        enable-versioned-regex: 0
+        sync-labels: 0
+```
