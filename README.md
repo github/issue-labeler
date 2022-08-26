@@ -95,7 +95,7 @@ The labeler action is also available for pull requests. Make sure the workflow i
 
 ```
 on:
-  pull_requests:
+  pull_request:
     types: [opened, edited]
 ```
 
