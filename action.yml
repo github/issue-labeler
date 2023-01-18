@@ -25,7 +25,7 @@ inputs:
     required: false
     default: "0"
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'lib/main.js'
 branding:
   icon: 'activity'

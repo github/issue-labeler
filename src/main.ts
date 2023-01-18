@@ -97,7 +97,7 @@ async function run() {
       console.log(`Removing label ${label} from issue #${issue_number}`)
       removeLabel(client, issue_number, label)
     });
-  } catch (error) {
+  } catch (error: any) {
     core.error(error);
     core.setFailed(error.message);
   }
