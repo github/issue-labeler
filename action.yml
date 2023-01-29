@@ -28,6 +28,10 @@ inputs:
     description: 'Disable removing labels that are not in the configuration file'
     required: false
     default: "0"
+  disable-body-read:
+    description: 'Disable reading the body of the issue'
+    required: false
+    default: "0"
 runs:
   using: 'node16'
   main: 'lib/index.js'
