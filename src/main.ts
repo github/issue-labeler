@@ -20,6 +20,7 @@ async function run() {
     required: false,
   });
   const includeTitle = parseInt(getInput("include-title", { required: false }));
+  const disableRemoveLabels = parseInt(getInput("disable-remove-labels", { required: false }));
 
   const issue_number = getIssueOrPRNumber();
   if (issue_number === undefined) {
@@ -100,9 +101,11 @@ async function run() {
     promises.push(addLabels(client, issue_number, addLabel));
   }
 
-  await Promise.all(
-    promises.concat(removeLabelItems.map(removeLabel(client, issue_number)))
-  );
+  if (removeLabelItems.length && disableRemoveLabels !== 1) {
+    await Promise.all(
+      promises.concat(removeLabelItems.map(removeLabel(client, issue_number)))
+    );
+  }
 }
 
 function getIssueOrPRNumber() {
