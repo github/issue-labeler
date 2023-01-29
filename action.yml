@@ -24,6 +24,10 @@ inputs:
     description: 'Include the title in addition to the body in the regex target'
     required: false
     default: "0"
+  disable-body-read:
+    description: 'Disable reading the body of the issue'
+    required: false
+    default: "0"
 runs:
   using: 'node16'
   main: 'lib/index.js'

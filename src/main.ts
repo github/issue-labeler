@@ -20,6 +20,7 @@ async function run() {
     required: false,
   });
   const includeTitle = parseInt(getInput("include-title", { required: false }));
+  const disableBodyRead = parseInt(getInput("disable-body-read", { required: false }));
 
   const issue_number = getIssueOrPRNumber();
   if (issue_number === undefined) {
@@ -27,15 +28,14 @@ async function run() {
     return;
   }
 
-  const issue_body = getIssueOrPRBody();
-  if (!issue_body) {
-    console.log("Could not get issue or PR body from context, exiting");
-    return;
+  let issue_body;
+  if (disableBodyRead !== 1) {
+    issue_body = getIssueOrPRBody();
   }
-
   const issue_title = getIssueOrPRTitle();
-  if (!issue_title) {
-    console.log("Could not get issue or PR title from context, exiting");
+
+  if (!issue_title || !issue_body) {
+    console.log("Could not get issue or PR title or body from context, exiting");
     return;
   }
 
