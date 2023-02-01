@@ -1,4 +1,4 @@
-import { getInput, error as setError, setFailed } from "@actions/core";
+import { getInput, setFailed, debug } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { load as loadYaml } from "js-yaml";
 
@@ -20,6 +20,7 @@ async function run() {
     required: false,
   });
   const includeTitle = parseInt(getInput("include-title", { required: false }));
+  const syncLabels = parseInt(getInput("sync-labels", { required: false }));
 
   const issue_number = getIssueOrPRNumber();
   if (issue_number === undefined) {
@@ -42,10 +43,12 @@ async function run() {
   // A client to load data from GitHub
   const { rest: client } = getOctokit(token);
 
-  const addLabel: string[] = [];
-  const removeLabelItems: string[] = [];
+  /** List of labels to add */
+  const toAdd: string[] = [];
+  /** List of labels to remove */
+  const toRemove: string[] = [];
 
-  if (enableVersionedRegex == 1) {
+  if (enableVersionedRegex === 1) {
     const regexVersion = versionedRegex.exec(issue_body);
     if (!regexVersion || !regexVersion[1]) {
       if (bodyMissingRegexLabel) {
@@ -55,10 +58,8 @@ async function run() {
         `Issue #${issue_number} does not contain regex version in the body of the issue, exiting.`
       );
       return;
-    } else {
-      if (bodyMissingRegexLabel) {
-        removeLabelItems.push(bodyMissingRegexLabel);
-      }
+    } else if (bodyMissingRegexLabel) {
+      toRemove.push(bodyMissingRegexLabel);
     }
     configPath = regexifyConfigPath(configPath, regexVersion[1]);
   }
@@ -88,21 +89,24 @@ async function run() {
 
   for (const [label, globs] of labelRegexes.entries()) {
     if (checkRegexes(issueContent, globs)) {
-      addLabel.push(label);
-    } else {
-      removeLabelItems.push(label);
+      toAdd.push(label);
+    } else if (syncLabels === 1) {
+      toRemove.push(label);
     }
   }
 
-  const promises = [];
-  if (addLabel.length) {
-    console.log(`Adding labels ${addLabel} to issue #${issue_number}`);
-    promises.push(addLabels(client, issue_number, addLabel));
+  let promises = [];
+  if (toAdd.length) {
+    promises.push(addLabels(client, issue_number, toAdd));
   }
 
-  await Promise.all(
-    promises.concat(removeLabelItems.map(removeLabel(client, issue_number)))
-  );
+  promises = promises.concat(toRemove.map(removeLabel(client, issue_number)));
+
+  const rejected = (await Promise.allSettled(promises))
+    .map((p) => p.status === "rejected" && p.reason)
+    .filter(Boolean);
+
+  throw new AggregateError(rejected);
 }
 
 function getIssueOrPRNumber() {
@@ -197,7 +201,8 @@ async function addLabels(
   labels: string[]
 ) {
   try {
-    console.log(`Adding labels ${labels} to issue #${issue_number}`);
+    const formatted = labels.map((l) => `"${l}"`).join(", ");
+    debug(`Adding label(s) (${formatted}) to issue #${issue_number}`);
     return await client.issues.addLabels({
       owner: context.repo.owner,
       repo: context.repo.repo,
@@ -213,7 +218,7 @@ async function addLabels(
 function removeLabel(client: GitHubClient, issue_number: number) {
   return async function (name: string) {
     try {
-      console.log(`Removing label ${name} from issue #${issue_number}`);
+      debug(`Removing label ${name} from issue #${issue_number}`);
       return await client.issues.removeLabel({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -221,14 +226,12 @@ function removeLabel(client: GitHubClient, issue_number: number) {
         name,
       });
     } catch (error) {
-      console.log(`Could not remove label ${name} from issue #${issue_number}`);
+      console.log(
+        `Could not remove label "${name}" from issue #${issue_number}`
+      );
       throw error;
     }
   };
 }
 
-run().catch((e) => {
-  const error = e as Error;
-  setError(error);
-  setFailed(error.message);
-});
+run().catch(setFailed);
