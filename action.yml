@@ -24,6 +24,10 @@ inputs:
     description: 'Include the title in addition to the body in the regex target'
     required: false
     default: "0"
+  sync-labels:
+    description: 'Remove the label from the issue if the label regex does not match'
+    required: false
+    default: "0"
 runs:
   using: 'node16'
   main: 'lib/index.js'
