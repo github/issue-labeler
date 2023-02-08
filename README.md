@@ -123,8 +123,8 @@ jobs:
 
 ### Syncing Labels
 
-By default, labels that no longer match are removed from the issue. To disable this functionality, explicity
-set `sync-labels` to `0`.
+By default, labels that no longer match are not removed from the issue. To enable this functionality, explicity
+set `sync-labels` to `1`.
 
 ```
 jobs:
@@ -136,5 +136,5 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
-        sync-labels: 0
+        sync-labels: 1
 ```
