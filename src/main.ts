@@ -106,7 +106,9 @@ async function run() {
     .map((p) => p.status === "rejected" && p.reason)
     .filter(Boolean);
 
-  throw new AggregateError(rejected);
+  if (rejected.length) {
+    throw new AggregateError(rejected)
+  }
 }
 
 function getIssueOrPRNumber() {
