@@ -118,6 +118,9 @@ function getIssueOrPRNumber() {
 
 function getIssueOrPRBody() {
   const { issue, pull_request } = context.payload;
+  if (issue?.body === null || pull_request?.body === null) {
+    return '';
+  }
   return issue?.body ?? pull_request?.body;
 }
 
