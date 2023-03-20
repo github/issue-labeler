@@ -29,7 +29,7 @@ async function run() {
   }
 
   const issue_body = getIssueOrPRBody();
-  if (!issue_body) {
+  if (issue_body === undefined) {
     console.log("Could not get issue or PR body from context, exiting");
     return;
   }
