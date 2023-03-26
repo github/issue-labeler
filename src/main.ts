@@ -29,7 +29,7 @@ async function run() {
   }
 
   const issue_body = getIssueOrPRBody();
-  if (!issue_body) {
+  if (issue_body === undefined) {
     console.log("Could not get issue or PR body from context, exiting");
     return;
   }
@@ -47,6 +47,22 @@ async function run() {
   const toAdd: string[] = [];
   /** List of labels to remove */
   const toRemove: string[] = [];
+
+  const issue = await client.issues.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    issue_number,
+  });
+
+  const labels: String[] = []
+  issue.data.labels.forEach((label) => {
+    if (typeof label === 'string') {
+    } else {
+      labels.push(<String>label.name);
+    }
+  });
+
+  debug(`Issue has the following labels #${labels}`);
 
   if (enableVersionedRegex === 1) {
     const regexVersion = versionedRegex.exec(issue_body);
@@ -66,11 +82,6 @@ async function run() {
 
   // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
   if (notBefore) {
-    const issue = await client.issues.get({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      issue_number,
-    });
     const issueCreatedAt = Date.parse(issue.data.created_at);
     if (issueCreatedAt < notBefore) {
       console.log(
@@ -91,7 +102,10 @@ async function run() {
     if (checkRegexes(issueContent, globs)) {
       toAdd.push(label);
     } else if (syncLabels === 1) {
-      toRemove.push(label);
+      if (labels.includes(label)) {
+        debug(`Marking #${label} label for removal`);
+        toRemove.push(label);
+      }
     }
   }
 
@@ -118,6 +132,9 @@ function getIssueOrPRNumber() {
 
 function getIssueOrPRBody() {
   const { issue, pull_request } = context.payload;
+  if (issue?.body === null || pull_request?.body === null) {
+    return '';
+  }
   return issue?.body ?? pull_request?.body;
 }
 
