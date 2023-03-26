@@ -48,6 +48,20 @@ async function run() {
   /** List of labels to remove */
   const toRemove: string[] = [];
 
+  const issue = await client.issues.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    issue_number,
+  });
+
+  const labels: String[] = []
+  issue.data.labels.forEach((label) => {
+    if (typeof label === 'string') {
+    } else {
+      labels.push(<String>label.name);
+    }
+  });
+
   if (enableVersionedRegex === 1) {
     const regexVersion = versionedRegex.exec(issue_body);
     if (!regexVersion || !regexVersion[1]) {
@@ -66,11 +80,6 @@ async function run() {
 
   // If the notBefore parameter has been set to a valid timestamp, exit if the current issue was created before notBefore
   if (notBefore) {
-    const issue = await client.issues.get({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      issue_number,
-    });
     const issueCreatedAt = Date.parse(issue.data.created_at);
     if (issueCreatedAt < notBefore) {
       console.log(
@@ -91,7 +100,9 @@ async function run() {
     if (checkRegexes(issueContent, globs)) {
       toAdd.push(label);
     } else if (syncLabels === 1) {
-      toRemove.push(label);
+      if (!labels.includes(label)) {
+        toRemove.push(label);
+      }
     }
   }
 
