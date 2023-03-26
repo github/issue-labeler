@@ -62,6 +62,8 @@ async function run() {
     }
   });
 
+  debug(`Issue has the following labels #${labels}`);
+
   if (enableVersionedRegex === 1) {
     const regexVersion = versionedRegex.exec(issue_body);
     if (!regexVersion || !regexVersion[1]) {
@@ -101,6 +103,7 @@ async function run() {
       toAdd.push(label);
     } else if (syncLabels === 1) {
       if (labels.includes(label)) {
+        debug(`Marking #${label} label for removal`);
         toRemove.push(label);
       }
     }
