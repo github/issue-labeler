@@ -100,7 +100,7 @@ async function run() {
     if (checkRegexes(issueContent, globs)) {
       toAdd.push(label);
     } else if (syncLabels === 1) {
-      if (!labels.includes(label)) {
+      if (labels.includes(label)) {
         toRemove.push(label);
       }
     }
