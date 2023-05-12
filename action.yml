@@ -28,6 +28,11 @@ inputs:
     description: 'Remove the label from the issue if the label regex does not match'
     required: false
     default: "0"
+  issue_number:
+    description: 'The number of the issue/PR to label'
+    required: false
+    default: ${{ github.event.issue.number || github.event.pull_request.number }}
+    
 runs:
   using: 'node16'
   main: 'lib/index.js'

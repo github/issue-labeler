@@ -22,23 +22,7 @@ async function run() {
   const includeTitle = parseInt(getInput("include-title", { required: false }));
   const syncLabels = parseInt(getInput("sync-labels", { required: false }));
 
-  const issue_number = getIssueOrPRNumber();
-  if (issue_number === undefined) {
-    console.log("Could not get issue or PR number from context, exiting");
-    return;
-  }
-
-  const issue_body = getIssueOrPRBody();
-  if (issue_body === undefined) {
-    console.log("Could not get issue or PR body from context, exiting");
-    return;
-  }
-
-  const issue_title = getIssueOrPRTitle();
-  if (!issue_title) {
-    console.log("Could not get issue or PR title from context, exiting");
-    return;
-  }
+  const issue_number = parseInt(getInput("issue-number", { required: true }))
 
   // A client to load data from GitHub
   const { rest: client } = getOctokit(token);
@@ -53,6 +37,18 @@ async function run() {
     repo: context.repo.repo,
     issue_number,
   });
+
+  const issue_body = issue.data.body ?? getIssueOrPRBody();
+  if (issue_body === undefined) {
+    console.log("Could not get issue or PR body from API or context, exiting");
+    return;
+  }
+
+  const issue_title = issue.data.title ?? getIssueOrPRTitle();
+  if (!issue_title) {
+    console.log("Could not get issue or PR title from API or context, exiting");
+    return;
+  }
 
   const labels: String[] = []
   issue.data.labels.forEach((label) => {
@@ -123,11 +119,6 @@ async function run() {
   if (rejected.length) {
     throw new AggregateError(rejected)
   }
-}
-
-function getIssueOrPRNumber() {
-  const { issue, pull_request } = context.payload;
-  return issue?.number ?? pull_request?.number;
 }
 
 function getIssueOrPRBody() {
