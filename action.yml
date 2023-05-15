@@ -4,7 +4,8 @@ author: 'GitHub'
 inputs:
   repo-token:
     description: 'The GITHUB_TOKEN secret'
-    required: true
+    required: false
+    default: '${{ github.token }}'
   configuration-path:
     description: 'Path to the labeler.yml configuration file'
     required: true
