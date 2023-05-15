@@ -123,7 +123,7 @@ jobs:
 
 ### Syncing Labels
 
-By default, labels that no longer match are not removed from the issue. To enable this functionality, explicity
+By default, labels that no longer match are not removed from the issue. To enable this functionality, explicitly
 set `sync-labels` to `1`.
 
 ```
