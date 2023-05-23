@@ -38,7 +38,8 @@ on:
 
 permissions:
   issues: write
-
+  contents: read
+  
 jobs:
   triage:
     runs-on: ubuntu-latest
@@ -76,7 +77,8 @@ on:
 
 permissions:
   issues: write
-
+  contents: read
+  
 jobs:
   triage:
     runs-on: ubuntu-latest
@@ -120,7 +122,8 @@ on:
 
 permissions:
   issues: write
-
+  contents: read
+  
 jobs:
   triage:
     runs-on: ubuntu-latest
