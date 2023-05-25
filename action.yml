@@ -33,7 +33,12 @@ inputs:
     description: 'The number of the issue/PR to label'
     required: false
     default: ${{ github.event.issue.number || github.event.pull_request.number }}
-    
+outputs:
+  labels-added:
+    description: 'The labels that were added by the action, as a stringified array.'
+  labels-removed:
+    description: 'The labels that were removed by the action, as a stringified array.'
+
 runs:
   using: 'node16'
   main: 'lib/index.js'
