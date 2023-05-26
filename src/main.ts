@@ -1,4 +1,4 @@
-import { getInput, setFailed, debug } from "@actions/core";
+import { getInput, setFailed, debug, setOutput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { load as loadYaml } from "js-yaml";
 
@@ -118,6 +118,14 @@ async function run() {
 
   if (rejected.length) {
     throw new AggregateError(rejected)
+  }
+
+  if (toAdd.length) {
+    setOutput("labels-added", toAdd);
+  }
+
+  if (toRemove.length) {
+    setOutput("labels-removed", toRemove);
   }
 }
 
