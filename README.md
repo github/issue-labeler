@@ -49,6 +49,7 @@ jobs:
         configuration-path: .github/labeler.yml
         not-before: 2020-01-15T02:54:32Z
         enable-versioned-regex: 0
+        repo-token: ${{ github.token }}
 ```
 
 `not-before` is optional and will result in any issues prior to this timestamp to be ignored.
@@ -90,6 +91,7 @@ jobs:
         enable-versioned-regex: 1
         versioned-regex: 'issue_labeler_regex_version=(\d+)'
         body-missing-regex-label: 'broken-template'
+        repo-token: ${{ github.token }}
 ```
 
 When the issue is evaluated it'll look for `.github/labeler-v1.yml` based on the `configuration-path` and the version number set in the issue.
@@ -133,6 +135,7 @@ jobs:
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
         include-title: 1
+        repo-token: ${{ github.token }}
 ```
 
 ### Syncing Labels
@@ -150,4 +153,5 @@ jobs:
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
         sync-labels: 1
+        repo-token: ${{ github.token }}
 ```
