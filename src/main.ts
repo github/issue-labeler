@@ -20,6 +20,7 @@ async function run() {
     required: false,
   });
   const includeTitle = parseInt(getInput("include-title", { required: false }));
+  const includeBody = parseInt(getInput("include-body", { required: false }));
   const syncLabels = parseInt(getInput("sync-labels", { required: false }));
 
   const issue_number = parseInt(getInput("issue-number", { required: true }))
@@ -92,7 +93,7 @@ async function run() {
 
   let issueContent = "";
   if (includeTitle === 1) issueContent += `${issue_title}\n\n`;
-  issueContent += issue_body;
+  if (includeBody === 1) issueContent += issue_body;
 
   for (const [label, globs] of labelRegexes.entries()) {
     if (checkRegexes(issueContent, globs)) {
