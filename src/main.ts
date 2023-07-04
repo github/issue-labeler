@@ -95,10 +95,14 @@ async function run() {
   issueContent += issue_body;
 
   for (const [label, globs] of labelRegexes.entries()) {
+    console.log(`${label} ${globs}`);
     if (checkRegexes(issueContent, globs)) {
+      console.log(`${label} is true`);
       toAdd.push(label);
     } else if (syncLabels === 1) {
+      console.log(`${label} and sync label 1`);
       if (labels.includes(label)) {
+        console.log(`${label} setting for removal`);
         debug(`Marking #${label} label for removal`);
         toRemove.push(label);
       }
