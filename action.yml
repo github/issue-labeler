@@ -7,7 +7,7 @@ inputs:
     required: false
     default: '${{ github.token }}'
   configuration-path:
-    description: 'Path to the labeler.yml configuration file'
+    description: "The path to the label configuration file. If the file doesn't exist at the specified path on the runner, action will read from the source repository via the Github API."
     required: true
   enable-versioned-regex:
     description: 'Controls if versioned regex templates are being used'

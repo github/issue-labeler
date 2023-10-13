@@ -1,6 +1,7 @@
 import { getInput, setFailed, debug, setOutput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { load as loadYaml } from "js-yaml";
+import fs from "fs";
 
 type GitHubClient = ReturnType<typeof getOctokit>["rest"];
 
@@ -151,21 +152,31 @@ function regexifyConfigPath(configPath: string, version: string) {
 /** Load the configuration file */
 async function loadConfig(client: GitHubClient, configPath: string) {
   try {
-    const { data } = await client.repos.getContent({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      ref: context.sha,
-      path: configPath,
-    });
+    let configContent: string
 
-    if (!("content" in data)) {
-      throw new TypeError(
-        "The configuration path provided is not a valid file. Exiting"
-      );
+    if (fs.existsSync(configPath)) {
+      console.log(`Configuration file (path: ${configPath}) exists locally, loading from file`);
+
+      configContent = fs.readFileSync(configPath, { encoding: "utf8" });
+    } else {
+      console.log(`Configuration file (path: ${configPath}) does not exist locally, fetching via the API`);
+
+      const { data } = await client.repos.getContent({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        ref: context.sha,
+        path: configPath,
+      });
+
+      if (!("content" in data)) {
+        throw new TypeError(
+          "The configuration path provided is not a valid file. Exiting"
+        );
+      }
+
+      configContent = Buffer.from(data.content, "base64").toString("utf8");
     }
-
-    const configContent = Buffer.from(data.content, "base64").toString("utf8");
-
+  
     // loads (hopefully) a `{[label:string]: string | string[]}`, but is `any`:
     const configObject = loadYaml(configContent);
 
