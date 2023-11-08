@@ -44,7 +44,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1 #May not be the latest version
+    - uses: github/issue-labeler@v3.3 #May not be the latest version
       with:
         configuration-path: .github/labeler.yml
         not-before: 2020-01-15T02:54:32Z
@@ -84,7 +84,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1 #May not be the latest version
+    - uses: github/issue-labeler@v3.3 #May not be the latest version
       with:
         configuration-path: .github/labeler.yml
         not-before: 2020-01-15T02:54:32Z
@@ -130,7 +130,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1 #May not be the latest version
+    - uses: github/issue-labeler@v3.3 #May not be the latest version
       with:
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
@@ -156,7 +156,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1 #May not be the latest version
+    - uses: github/issue-labeler@v3.3 #May not be the latest version
       with:
         configuration-path: .github/labeler.yml
         include-title: 1
@@ -173,7 +173,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1
+    - uses: github/issue-labeler@v3.3
       with:
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
