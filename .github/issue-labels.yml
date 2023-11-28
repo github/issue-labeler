@@ -1,0 +1,15 @@
+"Label 1":
+  oneOf:
+    - 'A/.*'
+    - 'B/.*'
+    - 'C/.*'
+  exclude:
+    - 'A/substuff/.*'
+    - 'B/substuff/.*'
+    - 'C/substuff/.*'
+"Label 2":
+  - "A/substuff/.*"
+"ABLU LABEL":
+  allOf:
+    - "B/substuff/.*"
+    - "ABLU"
