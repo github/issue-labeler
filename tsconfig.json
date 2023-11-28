@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "NodeNext",
+    "module": "CommonJS",
     "strict": true,
   },
   "exclude": [

@@ -1,7 +1,7 @@
 import { getInput, setFailed, debug, setOutput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { load as loadYaml } from "js-yaml";
-import fs from "fs";
+import * as fs from "fs";
 
 type GitHubClient = ReturnType<typeof getOctokit>["rest"];
 
@@ -150,7 +150,7 @@ function regexifyConfigPath(configPath: string, version: string) {
 }
 
 /** Load the configuration file */
-async function loadConfig(client: GitHubClient, configPath: string) {
+export async function loadConfig(client: GitHubClient, configPath: string) {
   try {
     let configContent: string
 
@@ -176,7 +176,7 @@ async function loadConfig(client: GitHubClient, configPath: string) {
 
       configContent = Buffer.from(data.content, "base64").toString("utf8");
     }
-  
+
     // loads (hopefully) a `{[label:string]: string | string[]}`, but is `any`:
     const configObject = loadYaml(configContent);
 
@@ -188,13 +188,27 @@ async function loadConfig(client: GitHubClient, configPath: string) {
   }
 }
 
+interface RuleSet {
+  oneOf: string[]
+  allOf: string[]
+  exclude: string[]
+}
+
 function getLabelRegexesMapFromObject(configObject: any) {
-  const labelRegexes = new Map<string, string[]>();
+  const labelRegexes = new Map<string, RuleSet>();
   for (const label in configObject) {
-    if (typeof configObject[label] === "string") {
-      labelRegexes.set(label, [configObject[label]]);
-    } else if (Array.isArray(configObject[label])) {
-      labelRegexes.set(label, configObject[label]);
+    let baseRuleSet = {
+      oneOf: [],
+      allOf: [],
+      exclude: [],
+    }
+    const value = configObject[label];
+    if (typeof value === "string") {
+      labelRegexes.set(label, { oneOf: [value], allOf: [], exclude: [] });
+    } else if (Array.isArray(value)) {
+      labelRegexes.set(label, { oneOf: value , allOf: [], exclude: []});
+    } else if (typeof value === 'object' && (value.oneOf || value.allOf || value.exclude)) {
+      labelRegexes.set(label, {...baseRuleSet, ...value});
     } else {
       throw Error(
         `found unexpected type for label ${label} (should be string or array of regex)`
@@ -205,25 +219,56 @@ function getLabelRegexesMapFromObject(configObject: any) {
   return labelRegexes;
 }
 
-function checkRegexes(issue_body: string, regexes: string[]) {
-  let found;
+export function checkRegexes(issue_body: string, regexes: RuleSet) {
+  let foundsIncludeAny = [];
+  let foundsIncludeAll = [];
+  let foundsExcludeAny = [];
 
-  // If several regex entries are provided we require all of them to match for the label to be applied.
-  for (const regEx of regexes) {
+  // Check includeAny
+  for (const regEx of regexes.oneOf) {
     const isRegEx = regEx.match(/^\/(.+)\/(.*)$/);
-
+    let found;
     if (isRegEx) {
       found = issue_body.match(new RegExp(isRegEx[1], isRegEx[2]));
     } else {
       found = issue_body.match(regEx);
     }
-
-    if (!found) {
-      return false;
-    }
+    foundsIncludeAny.push(found);
   }
-  return true;
+
+  // Check includeAll
+  for (const regEx of regexes.allOf) {
+    const isRegEx = regEx.match(/^\/(.+)\/(.*)$/);
+    let found;
+    if (isRegEx) {
+      found = issue_body.match(new RegExp(isRegEx[1], isRegEx[2]));
+    } else {
+      found = issue_body.match(regEx);
+    }
+    foundsIncludeAll.push(found);
+  }
+
+  // Check excludeAny
+  for (const regEx of regexes.exclude) {
+    const isRegEx = regEx.match(/^\/(.+)\/(.*)$/);
+    let found;
+    if (isRegEx) {
+      found = issue_body.match(new RegExp(isRegEx[1], isRegEx[2]));
+    } else {
+      found = issue_body.match(regEx);
+    }
+    foundsExcludeAny.push(found);
+  }
+
+  // If any regex in includeAny matches or all regexes in includeAll match, it's valid
+  // If any regex in excludeAny matches, it's not valid
+  if ((foundsIncludeAny.some((found) => found) || (foundsIncludeAll.length > 0 && foundsIncludeAll.every((found) => found))) && !foundsExcludeAny.some((found) => found)) {
+    return true;
+  }
+
+  return false;
 }
+
 
 async function addLabels(
   client: GitHubClient,
