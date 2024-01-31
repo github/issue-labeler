@@ -45,7 +45,7 @@ outputs:
     description: 'The labels that were removed by the action, as a stringified array.'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'lib/index.js'
 branding:
   icon: 'activity'
