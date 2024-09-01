@@ -1,0 +1,47 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines at the bottom of every file
+[*]
+charset = utf-8
+end_of_line = lf
+max_line_length = 80
+
+# Tab indentation
+indent_style = tab
+indent_size = 4
+
+# Make sure every file has a blank line at the end
+insert_final_newline = true
+
+# Remove any whitespace characters preceding newline characters
+trim_trailing_whitespace = true
+
+# Give operators breathing room, but not brackets
+spaces_around_operators = true
+spaces_around_brackets = false
+indent_brace_style = K&R
+curly_bracket_next_line = false
+
+[*.{ts,tsx,mts,cts,js,jsx,cjs,mjs}]
+quote_type = single
+
+[*.{yml, yaml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+indent_size = 2
+
+[CHANGELOG.md]
+indent_size = false
+
+[{.gitignore,*.json,*.md,commitlint.yml}]
+max_line_length = off
+
+[{Makefile,go.mod,go.sum,*.go,.gitmodules}]
+indent_style = tab
+indent_size = 4
+
+[*.py]
+indent_brace_style = Python
