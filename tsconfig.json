@@ -1,11 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "NodeNext",
-    "strict": true,
-  },
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts"
-  ]
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "NodeNext",
+		"strict": true
+	},
+	"exclude": ["node_modules", "**/*.test.ts"]
 }

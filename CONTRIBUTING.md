@@ -13,10 +13,10 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 ## Submitting a pull request
 
 0. [Fork][fork] and clone the repository
-0. Create a new branch: `git checkout -b my-branch-name`
-0. Make your change, add tests, and make sure the tests still pass
-0. Push to your fork and [submit a pull request](https://help.github.com/en/articles/creating-a-pull-request)
-0. Pat your self on the back and wait for your pull request to be reviewed and merged.
+1. Create a new branch: `git checkout -b my-branch-name`
+2. Make your change, add tests, and make sure the tests still pass
+3. Push to your fork and [submit a pull request](https://help.github.com/en/articles/creating-a-pull-request)
+4. Pat your self on the back and wait for your pull request to be reviewed and merged.
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 

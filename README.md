@@ -15,7 +15,7 @@ The key is the name of the label in your repository that you want to add (eg: "m
 ```yml
 # Add/remove 'critical' label if issue contains the words 'urgent' or 'critical'
 critical:
-    - '(critical|urgent)'
+  - "(critical|urgent)"
 ```
 
 #### Label All Issues
@@ -23,7 +23,7 @@ critical:
 ```yml
 # Add 'critical' label to any issue that gets opened
 critical:
-    - '/.*/'
+  - "/.*/"
 ```
 
 ### Create Workflow
@@ -44,12 +44,12 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.3 #May not be the latest version
-      with:
-        configuration-path: .github/labeler.yml
-        not-before: 2020-01-15T02:54:32Z
-        enable-versioned-regex: 0
-        repo-token: ${{ github.token }}
+      - uses: github/issue-labeler@v3.3 #May not be the latest version
+        with:
+          configuration-path: .github/labeler.yml
+          not-before: 2020-01-15T02:54:32Z
+          enable-versioned-regex: 0
+          repo-token: ${{ github.token }}
 ```
 
 `not-before` is optional and will result in any issues prior to this timestamp to be ignored.
@@ -84,14 +84,14 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.3 #May not be the latest version
-      with:
-        configuration-path: .github/labeler.yml
-        not-before: 2020-01-15T02:54:32Z
-        enable-versioned-regex: 1
-        versioned-regex: 'issue_labeler_regex_version=(\d+)'
-        body-missing-regex-label: 'broken-template'
-        repo-token: ${{ github.token }}
+      - uses: github/issue-labeler@v3.3 #May not be the latest version
+        with:
+          configuration-path: .github/labeler.yml
+          not-before: 2020-01-15T02:54:32Z
+          enable-versioned-regex: 1
+          versioned-regex: 'issue_labeler_regex_version=(\d+)'
+          body-missing-regex-label: "broken-template"
+          repo-token: ${{ github.token }}
 ```
 
 When the issue is evaluated it'll look for `.github/labeler-v1.yml` based on the `configuration-path` and the version number set in the issue.
@@ -130,15 +130,15 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.3 #May not be the latest version
-      with:
-        configuration-path: .github/labeler.yml
-        enable-versioned-regex: 0
-        include-title: 1
-        repo-token: ${{ github.token }}
+      - uses: github/issue-labeler@v3.3 #May not be the latest version
+        with:
+          configuration-path: .github/labeler.yml
+          enable-versioned-regex: 0
+          include-title: 1
+          repo-token: ${{ github.token }}
 ```
 
-### Example of *only* including the issue title, but not the body in the regex target
+### Example of _only_ including the issue title, but not the body in the regex target
 
 Set `include-title: 1` and `include-body: 0`.
 
@@ -156,11 +156,11 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.3 #May not be the latest version
-      with:
-        configuration-path: .github/labeler.yml
-        include-title: 1
-        include-body: 0
+      - uses: github/issue-labeler@v3.3 #May not be the latest version
+        with:
+          configuration-path: .github/labeler.yml
+          include-title: 1
+          include-body: 0
 ```
 
 ### Syncing Labels
@@ -173,10 +173,10 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.3
-      with:
-        configuration-path: .github/labeler.yml
-        enable-versioned-regex: 0
-        sync-labels: 1
-        repo-token: ${{ github.token }}
+      - uses: github/issue-labeler@v3.3
+        with:
+          configuration-path: .github/labeler.yml
+          enable-versioned-regex: 0
+          sync-labels: 1
+          repo-token: ${{ github.token }}
 ```

@@ -1,52 +1,52 @@
-name: 'RegEx Issue Labeler'
-description: 'Labels issues automatically based on their body'
-author: 'GitHub'
+name: "RegEx Issue Labeler"
+description: "Labels issues automatically based on their body"
+author: "GitHub"
 inputs:
   repo-token:
-    description: 'The GITHUB_TOKEN secret'
+    description: "The GITHUB_TOKEN secret"
     required: false
-    default: '${{ github.token }}'
+    default: "${{ github.token }}"
   configuration-path:
     description: "The path to the label configuration file. If the file doesn't exist at the specified path on the runner, action will read from the source repository via the Github API."
     required: true
   enable-versioned-regex:
-    description: 'Controls if versioned regex templates are being used'
+    description: "Controls if versioned regex templates are being used"
     required: true
   versioned-regex:
-    description: 'The regex version number to use. Only required if using versioned regex files'
+    description: "The regex version number to use. Only required if using versioned regex files"
     required: false
   not-before:
-    description: 'Is optional and will result in any issues prior to this timestamp to be ignored'
+    description: "Is optional and will result in any issues prior to this timestamp to be ignored"
     required: false
   body-missing-regex-label:
-    description: 'The name of the label that should be added to an issue where the specified `version-regex` can not be found.'
+    description: "The name of the label that should be added to an issue where the specified `version-regex` can not be found."
     required: false
   include-title:
-    description: 'Include the title in the regex target'
+    description: "Include the title in the regex target"
     required: false
     default: "0"
   include-body:
-    description: 'Include the body in the regex target'
+    description: "Include the body in the regex target"
     required: false
     default: "1"
   sync-labels:
-    description: 'Remove the label from the issue if the label regex does not match'
+    description: "Remove the label from the issue if the label regex does not match"
     required: false
     default: "0"
   issue-number:
-    description: 'The number of the issue/PR to label'
+    description: "The number of the issue/PR to label"
     required: false
     default: ${{ github.event.issue.number || github.event.pull_request.number }}
 
 outputs:
   labels-added:
-    description: 'The labels that were added by the action, as a stringified array.'
+    description: "The labels that were added by the action, as a stringified array."
   labels-removed:
-    description: 'The labels that were removed by the action, as a stringified array.'
+    description: "The labels that were removed by the action, as a stringified array."
 
 runs:
-  using: 'node20'
-  main: 'lib/index.js'
+  using: "node20"
+  main: "lib/index.js"
 branding:
-  icon: 'activity'
-  color: 'blue'
+  icon: "activity"
+  color: "blue"
