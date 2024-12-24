@@ -28,7 +28,7 @@ critical:
 
 ### Create Workflow
 
-Create a workflow (eg: `.github/workflows/labeler.yml` see [Creating a Workflow file]([https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file](https://docs.github.com/en/actions/use-cases-and-examples/creating-an-example-workflow ) to utilize the labeler action with content:
+Create a workflow (eg: `.github/workflows/labeler.yml` see [Creating a Workflow file](https://docs.github.com/en/actions/use-cases-and-examples/creating-an-example-workflow) ) to utilize the labeler action with content:
 
 ```yml
 name: "Issue Labeler"
