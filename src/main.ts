@@ -13,8 +13,11 @@ async function run() {
   const enableVersionedRegex = parseInt(
     getInput("enable-versioned-regex", { required: true })
   );
+  // Sanitize user input for the regular expression
+  const versionedRegexString = getInput("versioned-regex", { required: false });
   const versionedRegex = new RegExp(
-    getInput("versioned-regex", { required: false })
+    // Escape special characters in the user input to prevent injection
+    versionedRegexString.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
   );
   const notBefore = Date.parse(getInput("not-before", { required: false }));
   const bodyMissingRegexLabel = getInput("body-missing-regex-label", {
