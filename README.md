@@ -52,6 +52,8 @@ jobs:
         repo-token: ${{ github.token }}
 ```
 
+`enable-versioned-regex` is required and has no default; omitting it causes the action to fail. Set it to `0` to use the file at `configuration-path` directly. Set it to `1` to select a versioned configuration file using the first capture group of `versioned-regex` matched against the issue body, as shown in the [versioned issue templates example](#example-using-versioned-issue-templates). Versioning lets older issues keep using the regular expressions for their original template when templates change.
+
 `not-before` is optional and will result in any issues prior to this timestamp to be ignored.
 
 ### Example using versioned issue templates
@@ -159,6 +161,7 @@ jobs:
     - uses: github/issue-labeler@v3.5 #May not be the latest version
       with:
         configuration-path: .github/labeler.yml
+        enable-versioned-regex: 0
         include-title: 1
         include-body: 0
 ```
