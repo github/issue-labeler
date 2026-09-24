@@ -8,7 +8,9 @@ Issue labeler will label issues based on the body content of the issue.
 
 Create a `.github/labeler.yml` file with a list of labels and regex to match to apply the label.
 
-The key is the name of the label in your repository that you want to add (eg: "merge conflict", "needs-updating") and the value is the regular expression for when to apply the label. Should the regular expression not match, the label will be removed.
+The key is the name of the label in your repository that you want to add (eg: "merge conflict", "needs-updating") and the value is the regular expression for when to apply the label. By default, labels that no longer match are not removed from the issue (see `sync-labels`).
+
+⚠️ If you provide more than one regex per label, we require all of them to match for the label to be applied. ⚠️
 
 #### Basic Examples
 
@@ -165,8 +167,7 @@ jobs:
 
 ### Syncing Labels
 
-By default, labels that no longer match are not removed from the issue. To enable this functionality, explicity
-set `sync-labels` to `1`.
+By default, labels that no longer match are not removed from the issue. To enable this functionality, explicitly set `sync-labels` to `1`.
 
 ```yml
 jobs:
